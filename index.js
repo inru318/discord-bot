@@ -16,14 +16,14 @@ client.once(Events.ClientReady, c => {
 });
 
 // 成員加入 → 自動加新人角色
-client.on(Events.GuildMemberAdd, async (member) => {
-    try {
-        await member.roles.add(NEWBIE_ROLE_ID);
-        console.log(`已給 ${member.user.tag} 新人角色`);
-    } catch (err) {
-        console.error('加角色失敗:', err);
-    }
-});
+// client.on(Events.GuildMemberAdd, async (member) => {
+//     try {
+//         await member.roles.add(NEWBIE_ROLE_ID);
+//         console.log(`已給 ${member.user.tag} 新人角色`);
+//     } catch (err) {
+//         console.error('加角色失敗:', err);
+//     }
+// });
 
 // 成員角色更新 → 移除新人角色
 client.on(Events.GuildMemberUpdate, async (oldMember, newMember) => {
