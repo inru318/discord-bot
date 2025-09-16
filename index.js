@@ -17,6 +17,14 @@ client.once(Events.ClientReady, c => {
     console.log(`✅ 已登入：${c.user.tag}`);
 });
 
+// 每5分鐘 ping 一次
+const axios = require("axios");
+setInterval(() => {
+  axios.get(`https://${process.env.RENDER_EXTERNAL_URL || "你的-render-服務網址"}`)
+    .then(() => console.log("Keep-alive ping sent"))
+    .catch(err => console.error("Keep-alive error:", err.message));
+}, 5 * 60 * 1000); 
+
 // 成員角色更新 → 移除新人角色
 client.on(Events.GuildMemberUpdate, async (oldMember, newMember) => {
     if (newMember.roles.cache.has(NEWBIE_ROLE_ID)) {
