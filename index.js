@@ -56,9 +56,9 @@ client.on(Events.MessageCreate, async (message) => {
     // 發送提示訊息
     let reply;
     try {
-        reply = await message.channel.send(`${message.author} 好耶！妳的訊息已傳送給管理員✅，1 秒後自動刪除原始訊息~`);
+        await message.author.send("好耶！✅ 妳的訊息已傳送給管理員，1 秒後會自動刪除原始訊息，其他人看不到這則提示～");
     } catch (err) {
-        console.error("發送提示訊息失敗:", err);
+        console.error("無法傳送 DM，可能使用者關閉了私訊:", err);
     }
 
     // 建立 embed
