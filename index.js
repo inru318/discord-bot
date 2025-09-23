@@ -91,7 +91,7 @@ client.on(Events.MessageCreate, async (message) => {
                 console.error("刪除使用者訊息失敗:", err);
             }
         }
-    }, 3000);
+    }, 1500);
 });
 
 // ====== Express Server ======
