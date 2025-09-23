@@ -1,4 +1,13 @@
-const { Client, GatewayIntentBits, Events, EmbedBuilder } = require('discord.js');
+const { 
+  Client, 
+  GatewayIntentBits, 
+  Events, 
+  EmbedBuilder,
+  ActionRowBuilder, 
+  ButtonBuilder, 
+  ButtonStyle
+} = require('discord.js');
+
 require('dotenv').config();
 const express = require('express');
 const axios = require("axios");
@@ -49,13 +58,6 @@ client.on(Events.GuildMemberUpdate, async (oldMember, newMember) => {
 });
 
 // ====== 新人訊息轉發功能 ======
-const { 
-  ActionRowBuilder, 
-  ButtonBuilder, 
-  ButtonStyle, 
-  EmbedBuilder, 
-  Events 
-} = require('discord.js');
 
 // 例如 Bot 啟動後自動送出
 client.once(Events.ClientReady, async () => {
