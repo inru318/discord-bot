@@ -50,10 +50,10 @@ client.on(Events.GuildMemberUpdate, async (oldMember, newMember) => {
 
 // ====== 新人訊息轉發功能 ======
 client.on(Events.MessageCreate, async (message) => {
-    if (message.author.bot) return; // 不處理機器人自己
-    if (message.channel.id !== VERIFY_CHANNEL_ID) return; // 只處理驗證頻道
+    if (message.author.bot) return;
+    if (message.channel.id !== VERIFY_CHANNEL_ID) return;
 
-    // 發送給新人提示訊息，保留
+    // 發送提示訊息
     let reply;
     try {
         reply = await message.channel.send(`${message.author} 你的訊息已傳送給管理員✅，3 秒後自動刪除原始訊息`);
@@ -61,11 +61,10 @@ client.on(Events.MessageCreate, async (message) => {
         console.error("發送提示訊息失敗:", err);
     }
 
-    // 建立要發送到管理員頻道的 embed
+    // 建立 embed
     try {
         const embed = new EmbedBuilder()
             .setTitle("📩 叮咚叮咚！來了一封新的新人驗證訊息🐈‍⬛")
-            .setDescription(message.content || "(無文字內容)")
             .setColor(0x3498db)
             .setAuthor({
                 name: message.author.tag,
@@ -73,14 +72,35 @@ client.on(Events.MessageCreate, async (message) => {
             })
             .setTimestamp();
 
+        // 如果有文字
+        if (message.content) {
+            embed.setDescription(message.content);
+        } else {
+            embed.setDescription("(無文字內容)");
+        }
+
         const adminChannel = await client.channels.fetch(ADMIN_CHANNEL_ID);
-        console.log("→ 發送給管理員 embed");
-        await adminChannel.send({ embeds: [embed] });
+
+        // 如果有附件 (語音或圖片)
+        if (message.attachments.size > 0) {
+            // 將所有附件直接轉發
+            for (const attachment of message.attachments.values()) {
+                await adminChannel.send({
+                    content: `來自 ${message.author}`,
+                    embeds: [embed],
+                    files: [attachment.url] // 或 attachment.attachment
+                });
+            }
+        } else {
+            await adminChannel.send({ embeds: [embed] });
+        }
+
+        console.log("→ 發送給管理員完成");
     } catch (err) {
         console.error("發送給管理員失敗:", err);
     }
 
-    // 延遲 5 秒後刪除使用者原訊息
+    // 延遲刪除原訊息
     setTimeout(async () => {
         try {
             await message.delete();
@@ -91,7 +111,7 @@ client.on(Events.MessageCreate, async (message) => {
                 console.error("刪除使用者訊息失敗:", err);
             }
         }
-    }, 1500);
+    }, 1800);
 });
 
 // ====== Express Server ======
