@@ -49,7 +49,13 @@ client.on(Events.GuildMemberUpdate, async (oldMember, newMember) => {
 });
 
 // ====== 新人訊息轉發功能 ======
-const { ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+const { 
+  ActionRowBuilder, 
+  ButtonBuilder, 
+  ButtonStyle, 
+  EmbedBuilder, 
+  Events 
+} = require('discord.js');
 
 // 例如 Bot 啟動後自動送出
 client.once(Events.ClientReady, async () => {
@@ -68,8 +74,6 @@ client.once(Events.ClientReady, async () => {
         components: [row]
     });
 });
-
-const { EmbedBuilder } = require('discord.js');
 
 client.on(Events.InteractionCreate, async interaction => {
     if (!interaction.isButton()) return;
