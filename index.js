@@ -56,7 +56,7 @@ client.on(Events.MessageCreate, async (message) => {
     // 發送提示訊息
     let reply;
     try {
-        reply = await message.channel.send(`${message.author} 你的訊息已傳送給管理員✅，3 秒後自動刪除原始訊息`);
+        reply = await message.channel.send(`${message.author} 好耶！妳的訊息已傳送給管理員✅，1 秒後自動刪除原始訊息~`);
     } catch (err) {
         console.error("發送提示訊息失敗:", err);
     }
@@ -64,7 +64,7 @@ client.on(Events.MessageCreate, async (message) => {
     // 建立 embed
     try {
         const embed = new EmbedBuilder()
-            .setTitle("📩 叮咚叮咚！來了一封新的新人驗證訊息🐈‍⬛")
+            .setTitle("📩 叮咚叮咚！來了一封新人驗證訊息🐈‍⬛")
             .setColor(0x3498db)
             .setAuthor({
                 name: message.author.tag,
@@ -75,8 +75,6 @@ client.on(Events.MessageCreate, async (message) => {
         // 如果有文字
         if (message.content) {
             embed.setDescription(message.content);
-        } else {
-            embed.setDescription("(無文字內容)");
         }
 
         const adminChannel = await client.channels.fetch(ADMIN_CHANNEL_ID);
@@ -86,7 +84,7 @@ client.on(Events.MessageCreate, async (message) => {
             // 將所有附件直接轉發
             for (const attachment of message.attachments.values()) {
                 await adminChannel.send({
-                    content: `來自 ${message.author}`,
+                    content: `來自 ${message.author} 的語音訊息`,
                     embeds: [embed],
                     files: [attachment.url] // 或 attachment.attachment
                 });
@@ -111,7 +109,7 @@ client.on(Events.MessageCreate, async (message) => {
                 console.error("刪除使用者訊息失敗:", err);
             }
         }
-    }, 1800);
+    }, 1200);
 });
 
 // ====== Express Server ======
