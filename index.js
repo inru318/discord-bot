@@ -53,13 +53,18 @@ client.on(Events.MessageCreate, async (message) => {
     if (message.author.bot) return; // 不處理機器人自己
     if (message.channel.id !== VERIFY_CHANNEL_ID) return; // 只處理驗證頻道
 
+    // 發送給新人提示訊息，保留
+    let reply;
     try {
-        // 先刪掉新人原訊息
-        await message.delete();
+        reply = await message.channel.send(`${message.author} 你的訊息已傳送給管理員✅，3 秒後自動刪除原始訊息`);
+    } catch (err) {
+        console.error("發送提示訊息失敗:", err);
+    }
 
-        // 建立要發送到管理員頻道的 embed
+    // 建立要發送到管理員頻道的 embed
+    try {
         const embed = new EmbedBuilder()
-            .setTitle("📩 新人驗證訊息")
+            .setTitle("📩 叮咚叮咚！來了一封新的新人驗證訊息🐈‍⬛")
             .setDescription(message.content || "(無文字內容)")
             .setColor(0x3498db)
             .setAuthor({
@@ -68,21 +73,25 @@ client.on(Events.MessageCreate, async (message) => {
             })
             .setTimestamp();
 
-        // 發送到管理員頻道
         const adminChannel = await client.channels.fetch(ADMIN_CHANNEL_ID);
-        if (adminChannel) {
-            await adminChannel.send({ embeds: [embed] });
-        }
-
-        // 在驗證頻道提示新人（自動刪除）
-        const tempMsg = await message.channel.send(
-            `${message.author}, 你的訊息已收到 ✅`
-        );
-        setTimeout(() => tempMsg.delete().catch(() => {}), 3000);
-
+        console.log("→ 發送給管理員 embed");
+        await adminChannel.send({ embeds: [embed] });
     } catch (err) {
-        console.error("處理新人訊息失敗:", err);
+        console.error("發送給管理員失敗:", err);
     }
+
+    // 延遲 5 秒後刪除使用者原訊息
+    setTimeout(async () => {
+        try {
+            await message.delete();
+        } catch (err) {
+            if (err.code === 10008) {
+                console.warn("使用者訊息已不存在，無法刪除");
+            } else {
+                console.error("刪除使用者訊息失敗:", err);
+            }
+        }
+    }, 3000);
 });
 
 // ====== Express Server ======
