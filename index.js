@@ -69,47 +69,47 @@ client.on(Events.MessageCreate, async (message) => {
         console.error("發送提示訊息失敗:", err);
     }
 
-// ====== 建立精緻語音通知 Embed ======
+    // 建立 embed
     try {
-    const embed = new EmbedBuilder()
-        .setTitle("🐾 新朋友的語音來囉！")
-        .setColor(0xf1c40f)
-        .setAuthor({
-        name: message.author.tag,
-        iconURL: message.author.displayAvatarURL(),
-        })
-        .setThumbnail("https://i.imgur.com/cBz6uU9.png") // 建議換成群組主題圖
-        .setDescription([
-        "🎧 **語音驗證訊息通知**",
-        "",
-        `> 👋 ${message.author} 在驗證頻道傳送了一則語音訊息。`,
-        "> 請管理員前往審核或回覆 💬",
-        ].join("\n"))
-        .addFields(
-        { name: "📅 傳送時間", value: `<t:${Math.floor(message.createdTimestamp / 1000)}:f>`, inline: true },
-        { name: "📢 頻道", value: `<#${message.channel.id}>`, inline: true }
-        )
-        .setFooter({
-        text: "TWC 入群驗證系統",
-        iconURL: client.user.displayAvatarURL(),
-        })
-        .setTimestamp();
+        const embed = new EmbedBuilder()
+            .setTitle("🐾 新朋友的語音來囉！")
+            .setColor(0xf1c40f)
+            .setAuthor({
+                name: message.author.tag,
+                iconURL: message.author.displayAvatarURL()
+            })
+            .setTimestamp()
+            .setDescription([
+            "🎧 **語音驗證訊息通知**",
+            "",
+            `> 👋 ${message.author} 在驗證頻道傳送了一則語音訊息。`,
+            "> 請管理員前往審核或回覆 💬",
+            ].join("\n"));
 
-    // 若有語音附件
-    if (message.attachments.size > 0) {
-        for (const attachment of message.attachments.values()) {
-        embed.addFields({
-            name: "🎶 語音附件",
-            value: `[點此播放或下載 ${attachment.name || "語音檔"}](${attachment.url})`,
-        });
+        // 如果有文字
+        if (message.content) {
+            embed.setDescription(message.content);
         }
-    }
 
-    const adminChannel = await client.channels.fetch(ADMIN_CHANNEL_ID);
-    await adminChannel.send({ embeds: [embed] });
-    console.log("→ 發送給管理員完成");
+        const adminChannel = await client.channels.fetch(ADMIN_CHANNEL_ID);
+
+        // 如果有附件 (語音或圖片)
+        if (message.attachments.size > 0) {
+            // 將所有附件直接轉發
+            for (const attachment of message.attachments.values()) {
+                await adminChannel.send({
+                    content: `來自 ${message.author} 的語音訊息`,
+                    embeds: [embed],
+                    files: [attachment.url] // 或 attachment.attachment
+                });
+            }
+        } else {
+            await adminChannel.send({ embeds: [embed] });
+        }
+
+        console.log("→ 發送給管理員完成");
     } catch (err) {
-    console.error("發送給管理員失敗:", err);
+        console.error("發送給管理員失敗:", err);
     }
 
     // 延遲刪除原訊息
