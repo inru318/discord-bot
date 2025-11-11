@@ -78,13 +78,7 @@ client.on(Events.MessageCreate, async (message) => {
                 name: message.author.tag,
                 iconURL: message.author.displayAvatarURL()
             })
-            .setTimestamp()
-            .setDescription([
-            "🎧 **語音驗證訊息通知**",
-            "",
-            `> 👋 ${message.author} 在驗證頻道傳送了一則語音訊息。`,
-            "> 請管理員前往審核或回覆 💬",
-            ].join("\n"));
+            .setTimestamp();
 
         // 如果有文字
         if (message.content) {
