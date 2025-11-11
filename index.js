@@ -40,23 +40,22 @@ setInterval(() => {
 }, 5 * 60 * 1000);
 
 // ====== 成員角色更新 → 移除新人角色 ======
-client.on(Events.GuildMemberUpdate, async (oldMember, newMember) => {
-    if (newMember.roles.cache.has(NEWBIE_ROLE_ID)) {
-        const hadRolesBefore = oldMember.roles.cache.filter(r => r.id !== NEWBIE_ROLE_ID).size;
-        const hasRolesNow = newMember.roles.cache.filter(r => r.id !== NEWBIE_ROLE_ID).size;
+// client.on(Events.GuildMemberUpdate, async (oldMember, newMember) => {
+//     if (newMember.roles.cache.has(NEWBIE_ROLE_ID)) {
+//         const hadRolesBefore = oldMember.roles.cache.filter(r => r.id !== NEWBIE_ROLE_ID).size;
+//         const hasRolesNow = newMember.roles.cache.filter(r => r.id !== NEWBIE_ROLE_ID).size;
 
-        if (hasRolesNow > hadRolesBefore) {
-            try {
-                await newMember.roles.remove(NEWBIE_ROLE_ID);
-                console.log(`已移除 ${newMember.user.tag} 的新人角色`);
-            } catch (err) {
-                console.error('移除新人失敗:', err);
-            }
-        }
-    }
-});
+//         if (hasRolesNow > hadRolesBefore) {
+//             try {
+//                 await newMember.roles.remove(NEWBIE_ROLE_ID);
+//                 console.log(`已移除 ${newMember.user.tag} 的新人角色`);
+//             } catch (err) {
+//                 console.error('移除新人失敗:', err);
+//             }
+//         }
+//     }
+// });
 
-// ====== 新人訊息轉發功能 ======
 // ====== 新人訊息轉發功能 ======
 client.on(Events.MessageCreate, async (message) => {
     if (message.author.bot) return;
